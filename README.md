@@ -12,11 +12,11 @@ For mac and linux users, assuming you have homebrew installed:
 
 1. Install Python
 
->**Note:** I was on `Python v3.12.2` at the time I was working on this.
-
 ```zsh
 brew install python
 ```
+
+>**Note:** I was on `Python v3.12.2` at the time I was working on this.
 
 2. Verify Installation
 
