@@ -2,16 +2,6 @@
 
 Simple AI Chatbot Example App built with Python, OpenAI and LangChain
 
-## Coding Exercise
-
-All chat bots ultimately follow the same pattern. Therefore, we are not going to have a custom exercise, but instead refer to an external, already existing example.
-
-Here we are combining two technologies who are going to be useful in the future. OpenAI’s API and LangChain, a known framework when dealing with different AI models.
-
-Please go through the entire exercise and try to set up the chatbot in a way that you can input a query and the chatbot responds with an answer that is accurate and relevant.
-
-Ref: https://medium.com/@dash.ps/build-chatbot-with-llms-and-langchain-9cf610a156ff
-
 ## Dev Workspace Setup
 
 Setup instructions for frontend developers with little to no python experience.
@@ -89,7 +79,7 @@ alias python=python3
 source ~/.zshrc
 ```
 
-## Running the Examples
+## Running the Code
 
 1. Source the virtual environment
 
@@ -97,9 +87,9 @@ source ~/.zshrc
 source venv/bin/activate
 ```
 
-2. Run the bot
+2. Run the examples
 
-Run the Python app from the project's root.
+Run the the examples from the project's root.
 
 ```zsh
 python examples.py
@@ -110,3 +100,18 @@ Or, if you haven't setup an alias for python:
 ```zsh
 python3 examples.py
 ```
+
+3. Run the bot
+
+Same as the examples above, run the bot inside the virtual environment:
+
+```zsh
+python bot.py
+```
+
+## Resources and References
+
+- [Primary article for this exercise](https://medium.com/@dash.ps/build-chatbot-with-llms-and-langchain-9cf610a156ff)
+- [Math agent with custom tools](https://towardsdatascience.com/building-a-math-application-with-langchain-agents-23919d09a4d3)
+- [OpenAI docs](https://platform.openai.com/docs/overview)
+- [LangChain docs](https://python.langchain.com/docs/get_started/introduction)

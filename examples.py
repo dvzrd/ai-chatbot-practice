@@ -1,10 +1,22 @@
+# imports for environment variables
 import os
 from dotenv import load_dotenv
+# imports for core functionality
+from langchain_openai import OpenAI
 from langchain.chains import LLMChain
 from langchain_core.prompts import PromptTemplate
+# imports for agents example
 from langchain.agents import AgentType, initialize_agent, load_tools
-from langchain_openai import OpenAI
+# imports for memory example
 from langchain.memory import ConversationBufferMemory
+# imports for custom tools example
+from langchain.callbacks.manager import (
+    AsyncCallbackManagerForToolRun,
+    CallbackManagerForToolRun,
+)
+from typing import Optional
+from langchain.tools.base import BaseTool
+from datetime import datetime
 
 # Load the OpenAI API key from the .env file
 load_dotenv()
@@ -12,6 +24,24 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # Initialize the OpenAI llm model with the API key
 llm = OpenAI(openai_api_key=openai_api_key)
+
+# Define custom tools
+# - Note: This tool is used to give GPT-3 context of the current date, since its information cuts off after 2021
+class GetCurrentDate(BaseTool):
+    name = "get_current_date"
+    description = "Use this tool to get the current date, to calculate dates before or after the current date."
+    
+    def _run(
+        self, query, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> str:
+        """Use the tool."""
+        return datetime.today().strftime('%Y-%m-%d')
+
+    async def _arun(
+        self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
+    ) -> str:
+        """Use the tool asynchronously."""
+        raise NotImplementedError("custom_search does not support async")
 
 # Chains example refs:
 # - https://python.langchain.com/docs/integrations/llms/openai/
@@ -46,7 +76,6 @@ def query_openai_with_prompt_template(template: str, input: str) -> str:
     return response
 
 # Agents example refs:
-# - https://medium.com/@dash.ps/build-chatbot-with-llms-and-langchain-9cf610a156ff
 # - https://python.langchain.com/docs/integrations/llms/amazon_api_gateway/#agent
 def openai_math_agent(input: str) -> str:
     # Load the tools and initialize the agent
@@ -67,13 +96,31 @@ def query_openai_with_memory(input: str, memory: ConversationBufferMemory) -> st
         New human question: {question}
         Response:"""
     prompt = PromptTemplate.from_template(template)
+
     conversation = LLMChain(
         llm=llm,
         prompt=prompt,
         verbose=True,
         memory=memory
     )
+
     response = conversation({"question": input})
+
+    return response
+
+# Custom tools refs:
+# - https://python.langchain.com/docs/modules/tools/custom_tools/
+def query_openai_with_custom_tool(input: str) -> str:
+    # Define custom tools to use in the agent
+    tools = [GetCurrentDate()]
+    agent = initialize_agent(
+        tools=tools,
+        llm=llm,
+        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=True,
+    )
+
+    response = agent.invoke(input)
 
     return response
 
@@ -90,17 +137,23 @@ if __name__ == "__main__":
     print(city_description_response)
 
     # Use the OpenAI math agent to solve a math problem
-    # Note: This has errors, still working on it
+    # Note: Still working on this example, the math agent needs additional tools to solve math word problems correctly
+    # Ref: https://towardsdatascience.com/building-a-math-application-with-langchain-agents-23919d09a4d3
     # math_problem = "If my age is half of my dad's age and he is going to be 60 next year, what is my current age?"
     # math_response = openai_math_agent(math_problem)
     # print(math_response)
-    
-    # Query OpenAI with memory and prompt
+
     # Initialize ConversationBufferMemory to maintain chat_history across queries
+    # Note: Can also be defined as a global variable to maintain chat history across multiple queries, if needed
     chat_history = ConversationBufferMemory(memory_key="chat_history")
+    # Query OpenAI with memory to maintain chat history
     memory_response_1 = query_openai_with_memory("What is the capital of France?", chat_history)
     print(memory_response_1)
     memory_response_2 = query_openai_with_memory("What is a popular landmark there?", chat_history)
     print(memory_response_2)
     memory_response_3 = query_openai_with_memory("Is it popular with tourists?", chat_history)
     print(memory_response_3)
+
+    # Query OpenAI with custom tool
+    custom_tool_response = query_openai_with_custom_tool("What is the current date?")
+    print(custom_tool_response)
