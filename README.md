@@ -89,7 +89,7 @@ alias python=python3
 source ~/.zshrc
 ```
 
-## Running the Chatbot
+## Running the Examples
 
 1. Source the virtual environment
 
@@ -102,11 +102,11 @@ source venv/bin/activate
 Run the Python app from the project's root.
 
 ```zsh
-python bot.py
+python examples.py
 ```
 
 Or, if you haven't setup an alias for python:
 
 ```zsh
-python3 bot.py
+python3 examples.py
 ```

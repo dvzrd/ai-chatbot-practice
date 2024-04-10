@@ -4,6 +4,7 @@ from langchain.chains import LLMChain
 from langchain_core.prompts import PromptTemplate
 from langchain.agents import AgentType, initialize_agent, load_tools
 from langchain_openai import OpenAI
+from langchain.memory import ConversationBufferMemory
 
 # Load the OpenAI API key from the .env file
 load_dotenv()
@@ -57,6 +58,25 @@ def openai_math_agent(input: str) -> str:
 
     return response
 
+# Memory example refs:
+# - https://python.langchain.com/docs/modules/memory/
+# - https://python.langchain.com/docs/expression_language/how_to/message_history/
+def query_openai_with_memory(input: str, memory: ConversationBufferMemory) -> str:
+    template = """You are a nice chatbot having a conversation with a human.
+        Previous conversation: {chat_history}
+        New human question: {question}
+        Response:"""
+    prompt = PromptTemplate.from_template(template)
+    conversation = LLMChain(
+        llm=llm,
+        prompt=prompt,
+        verbose=True,
+        memory=memory
+    )
+    response = conversation({"question": input})
+
+    return response
+
 # Main function to run examples
 if __name__ == "__main__":
     # Query OpenAI with a question and print the response
@@ -70,6 +90,17 @@ if __name__ == "__main__":
     print(city_description_response)
 
     # Use the OpenAI math agent to solve a math problem
-    math_problem = "If my age is half of my dad's age and he is going to be 60 next year, what is my current age?"
-    math_response = openai_math_agent(math_problem)
-    print(math_response)
+    # Note: This has errors, still working on it
+    # math_problem = "If my age is half of my dad's age and he is going to be 60 next year, what is my current age?"
+    # math_response = openai_math_agent(math_problem)
+    # print(math_response)
+    
+    # Query OpenAI with memory and prompt
+    # Initialize ConversationBufferMemory to maintain chat_history across queries
+    chat_history = ConversationBufferMemory(memory_key="chat_history")
+    memory_response_1 = query_openai_with_memory("What is the capital of France?", chat_history)
+    print(memory_response_1)
+    memory_response_2 = query_openai_with_memory("What is a popular landmark there?", chat_history)
+    print(memory_response_2)
+    memory_response_3 = query_openai_with_memory("Is it popular with tourists?", chat_history)
+    print(memory_response_3)
