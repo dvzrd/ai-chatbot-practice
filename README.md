@@ -4,11 +4,15 @@ Simple AI Chatbot Example App built with Python, OpenAI and LangChain
 
 ## Dev Workspace Setup
 
-Setup instructions for frontend developers with little to no python experience.
+Setup instructions for developers with little to no python experience.
 
-This example assumes you have homebrew installed (for mac and linux users):
+For windows users, download latest release here: https://www.python.org/downloads/windows/
+
+For mac and linux users, assuming you have homebrew installed:
 
 1. Install Python
+
+>**Note:** I was on `Python v3.12.2` at the time I was working on this.
 
 ```zsh
 brew install python
